@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="StereoPolicy: Improving Robotic Manipulation Policies via Stereo Perception">
+  <meta name="keywords" content="Affordance Prediction, Foundation Models, Robotic Manipulation">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>UAD</title>
+
+  </script>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro"
+        rel="stylesheet">
+
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet"
+        href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css?v=30">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js?v=13"></script>
+</head>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-fullhd">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">StereoPolicy: Improving Robotic Manipulation<br>Policies via Stereo Perception</h1>
+          <div class="publication-author-list">
+            <div class="author-row">
+              <span>Evans Han<sup>1,2</sup></span>
+              <span>Yunfan Jiang<sup>1</sup></span>
+              <span>Yingke Wang<sup>1,*</sup></span>
+              <span>Haoyue Xiao<sup>1,*</sup></span>
+            </div>
+            <div class="author-row">
+              <span>Huang Huang<sup>1</sup></span>
+              <span>Jianwen Xie<sup>3</sup></span>
+              <span>Jiajun Wu<sup>1</sup></span>
+              <span>Li Fei-Fei<sup>1</sup></span>
+              <span>Ruohan Zhang<sup>1,2</sup></span>
+            </div>
+            <div class="affiliation-row">
+              <span><sup>1</sup>Stanford University</span>
+              <span><sup>2</sup>Northwestern University</span>
+              <span><sup>3</sup>Lambda, Inc</span>
+            </div>
+          </div>
+          <div class="is-size-5 publication-authors">
+            Preprint
+          </div>
+          <div class="publication-link-row">
+            <a class="publication-link-button" href="#">
+              <span class="icon"><i class="fas fa-file-pdf"></i></span>
+              <span>PDF</span>
+            </a>
+            <a class="publication-link-button" href="#">
+              <span class="icon"><i class="ai ai-arxiv"></i></span>
+              <span>arXiv</span>
+            </a>
+            <a class="publication-link-button" href="#">
+              <span class="icon"><i class="fas fa-code"></i></span>
+              <span>Code</span>
+            </a>
+            <a class="publication-link-button" href="#">
+              <span class="icon publication-x-icon">X</span>
+              <span>tl;dr</span>
+            </a>
+            <a class="publication-link-button" href="#">
+              <span class="icon"><i class="fas fa-file-pdf"></i></span>
+              <span>Appendix</span>
+            </a>
+            <a class="publication-link-button" href="#">
+              <span class="icon"><i class="fas fa-file-pdf"></i></span>
+              <span>Paper</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser">
+  <div class="container is-max-widescreen">
+    <!-- Abstract. -->
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Abstract</h2>
+        <div class="content has-text-justified">
+          <p>
+            Recent advances in robot imitation learning have yielded powerful visuomotor policies capable of manipulating a wide variety of objects directly from monocular visual inputs. However, monocular observations inherently lack reliable depth cues and spatial awareness, which are critical for precise manipulation in cluttered or geometrically complex scenes. To address this limitation, we introduce <strong>StereoPolicy</strong>, a new visuomotor policy learning framework that directly leverages synchronized stereo image pairs to strengthen geometric reasoning, without requiring explicit 3D reconstruction or camera calibration. StereoPolicy employs pretrained 2D vision encoders to process each image independently and fuses the resulting representations through a Stereo Transformer. This design implicitly captures spatial correspondence and disparity cues. The framework integrates seamlessly with diffusion-based and pretrained vision-language-action (VLA) policies, delivering consistent improvements over RGB, RGB-D, point cloud, and multi-view baselines across three simulation benchmarks: RoboMimic, RoboCasa, and OmniGibson. We further validate StereoPolicy on real-robot experiments spanning both tabletop and bimanual mobile manipulation settings. Our results underscore stereo vision as a scalable and robust modality that bridges 2D pretrained representations with 3D geometric understanding for robotic manipulation.
+          </p>
+        </div>
+      </div>
+    </div>
+    <!--/ Abstract. -->
+
+    <div class="hero-body">
+      <div class="container">
+        <div class="columns is-vcentered is-centered">
+          <img src="media/figures/stereopolicy-motivation-updated.jpg?v=2" class="interpolation-image" alt="Motivation of StereoPolicy" />
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</section>
+
+<section class="section fragility-section">
+  <div class="container is-max-widescreen">
+    <div class="fragility-heading">
+      <h2 class="title is-3">RGB-D and PCD are fragile in real world deployment</h2>
+      <span class="zoom-hint" aria-label="Hover GIFs to zoom">
+        <span class="icon"><i class="fas fa-search-plus"></i></span>
+        <span>Hover to zoom</span>
+      </span>
+    </div>
+    <div class="fragility-grid">
+      <figure class="fragility-item fragility-depth" data-note="cup handle missing">
+        <div class="fragility-frame" data-note="cup handle missing">
+          <img src="media/figures/depth-real-1.gif" alt="Regular Cup Hang task depth visualization">
+        </div>
+        <figcaption>Regular Cup Hang Task: Depth Visualization</figcaption>
+      </figure>
+      <figure class="fragility-item fragility-depth" data-note="entire cup missing">
+        <div class="fragility-frame" data-note="entire cup missing">
+          <img src="media/figures/depth-real-2.gif" alt="Glass Cup Hang task depth visualization">
+        </div>
+        <figcaption>Glass Cup Hang Task: Depth Visualization</figcaption>
+      </figure>
+      <figure class="fragility-item fragility-pcd" data-note="object deformation">
+        <div class="fragility-frame" data-note="object deformation">
+          <img src="media/figures/pcd-real-2.gif?v=2" alt="Regular Cup Hang task point cloud visualization">
+        </div>
+        <figcaption>Regular Cup Hang Task: Point Cloud (PCD) Visualization</figcaption>
+      </figure>
+      <figure class="fragility-item fragility-pcd" data-note="entire cup missing">
+        <div class="fragility-frame" data-note="entire cup missing">
+          <img src="media/figures/pcd-real-1.gif?v=2" alt="Glass Cup Hang task point cloud visualization">
+        </div>
+        <figcaption>Glass Cup Hang Task: Point Cloud (PCD) Visualization</figcaption>
+      </figure>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-widescreen">
+
+    <div class="rows">
+
+
+    <!-- Animation. -->
+    <div class="rows is-centered ">
+      <div class="row is-full-width">
+        <h2 class="title is-3">Overview of StereoPolicy</h2>
+
+        <!-- Interpolating. -->
+        <div class="content has-text-justified">
+        <!-- <br> -->
+        </div>
+        <div class="overview-click-note">
+          <span class="icon"><i class="fas fa-mouse-pointer"></i></span>
+          <span>Hover a module, then click to highlight it and read how it works.</span>
+        </div>
+        <div class="overview-interactive" aria-label="Interactive StereoPolicy overview">
+          <img src="media/figures/stereopolicy-overview.jpg?v=2" class="interpolation-image" alt="Overview of StereoPolicy pipeline" />
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-feature-dp" type="button" aria-label="StereoPolicy-DP stereo feature extractor" data-title="StereoPolicy-DP Feature Extractor" data-description="StereoPolicy-DP fuses synchronized left/right images into geometry-aware observation tokens. These stereo tokens are concatenated with low-dimensional proprioception and condition a diffusion policy trained from scratch for each task."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-diffusion-policy" type="button" aria-label="Diffusion policy action generator" data-title="Diffusion Policy Backbone" data-description="The diffusion policy treats action generation as denoising: it starts from noisy action trajectories and iteratively refines them into continuous robot actions, conditioned on the fused stereo observation."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-feature-vla" type="button" aria-label="StereoPolicy-VLA stereo feature extractor plugin" data-title="StereoPolicy-VLA Plugin" data-description="For pretrained VLA models, StereoPolicy adds a lightweight stereo feature extractor on top of the existing vision encoder, replacing monocular visual embeddings with stereo-aware features while preserving the VLA backbone."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-vla-backbone" type="button" aria-label="VLA backbone with language, state, and stereo features" data-title="VLA Policy Backbone" data-description="The fused stereo representation is injected together with language instructions and robot state into the VLA/DiT/action decoder, allowing pretrained semantic knowledge to benefit from stereo depth cues after fine-tuning."></button>
+          <button class="overview-hotspot overview-hotspot-wide overview-hotspot-stereo-extractor" type="button" aria-label="Stereo feature extractor module" data-title="Stereo Feature Extractor" data-description="Each stereo pair is processed by shared 2D vision encoders to preserve geometric consistency. DINOv2 embeddings are used for external views because they improve external-view features, but are omitted for wrist views due to egocentric domain mismatch."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-vision-third" type="button" aria-label="External view vision encoder" data-title="External View Vision Encoder" data-description="The left and right external view images pass through shared 2D vision encoders before stereo fusion. The ablations show that a strong visual backbone helps extract object and scene cues, while the Stereo Transformer is still needed to turn those monocular tokens into geometry-aware stereo features."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-dino" type="button" aria-label="DINOv2 external view feature branch" data-title="DINOv2 External View Features" data-description="DINOv2 is applied only to the external/agent view. In the ablation, adding DINOv2 to the external view improves pretrained semantic features, but applying it to the wrist view is not used because wrist images are egocentric, close-up, and distribution-shifted from DINOv2 pretraining."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-vision-wrist" type="button" aria-label="Wrist-view vision encoder" data-title="Wrist-View Vision Encoder" data-description="The wrist stereo pair uses the same shared-encoder principle, but without DINOv2. This keeps the wrist stream focused on close-range manipulation evidence, and the ablation motivates avoiding pretrained external view priors that can be less reliable for egocentric wrist views."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-transformer-third" type="button" aria-label="External view stereo transformer" data-title="External View Stereo Transformer" data-description="The external view transformer fuses left/right external-view features, using strong monocular priors plus stereo correspondence to recover task-relevant spatial structure without explicit 3D reconstruction."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-transformer-wrist" type="button" aria-label="Wrist-view stereo transformer" data-title="Wrist-View Stereo Transformer" data-description="Wrist-view stereo is fused independently from external view stereo. The paper applies no DINOv2 here because pretrained external view priors can hurt egocentric wrist images."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-attention-detail" type="button" aria-label="Self and cross attention mechanism" data-title="Self + Cross-View Attention" data-description="Self-attention captures within-view context. Cross-view attention masks same-view interactions so tokens attend to the opposite image, and 2D RoPE encourages spatial correspondence and disparity reasoning."></button>
+          <button class="overview-hotspot overview-hotspot-compact overview-hotspot-transformer-detail" type="button" aria-label="Stereo transformer detail module" data-title="Stereo Transformer Output" data-description="The Stereo Transformer produces fused stereo features, including a task-aware [CLS] embedding for diffusion policy, giving the policy implicit depth and correspondence cues without depth maps, point clouds, or camera calibration."></button>
+        </div>
+        <div class="overview-info-panel" id="overview-info-panel" aria-live="polite">
+          <h3>Click a module in the pipeline</h3>
+          <p>StereoPolicy directly turns synchronized stereo images into geometry-aware policy features, bridging pretrained 2D visual representations with implicit 3D spatial reasoning.</p>
+        </div>
+        </br>
+        </br>
+          <div class="content has-text-justified">
+            <p>
+              <strong>Pipeline of StereoPolicy.</strong> Stereo inputs are encoded by a vision backbone, fused with a Transformer using cross-mask attention, and applied to both diffusion-policy training and finetuning VLA baselines.
+            </p>
+            <ul>
+              <li><strong>StereoPolicy-DP</strong> integrates stereo encoder into diffusion policy, trained from scratch on each benchmark task.</li>
+              <li><strong>StereoPolicy-VLA</strong> combines the stereo encoder with pre-trained VLA model and fine-tunes the system.</li>
+            </ul>
+          </div>
+
+    </div>
+  </div>
+</section>
+
+
+<section class="section">
+  <div class="container is-max-widescreen">
+
+    <div class="rows">
+      <h2 class="title is-3">Real-World Deployments</h2>
+      <h3 class="title is-4 mobile-deployment-title">Bimanual Mobile Manipulation</h3>
+      <div class="mobile-deployment-grid">
+        <article class="mobile-deployment-task">
+          <h4>Turn On Radio</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Turn On Radio bimanual mobile manipulation deployment">
+            <source src="media/deployments/turn-on-radio-web.mp4" type="video/mp4">
+          </video>
+        </article>
+        <article class="mobile-deployment-task">
+          <h4>PnP Toast</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Toast bimanual mobile manipulation deployment">
+            <source src="media/deployments/pnp-toast-mobile-web.mp4" type="video/mp4">
+          </video>
+        </article>
+      </div>
+
+      <article class="performance-card">
+        <h4>Bimanual Mobile Manipulation</h4>
+        <div class="mobile-performance-charts" aria-label="Bimanual mobile manipulation success rates">
+          <div class="mobile-performance-chart">
+            <div class="chart-title">Real-World</div>
+            <div class="chart-area">
+              <div class="chart-axis chart-axis-top">1.0</div>
+              <div class="chart-axis chart-axis-bottom">0.0</div>
+              <div class="mobile-task-bars">
+                <div class="mobile-task-bar-group">
+                  <div class="bar-pair">
+                    <div class="performance-bar rgb-bar" style="--bar-height: 70%;">
+                      <span>70%</span>
+                    </div>
+                    <div class="performance-bar stereo-bar" style="--bar-height: 85%;">
+                      <span>85%</span>
+                    </div>
+                  </div>
+                  <div class="bar-label">PnP Toast</div>
+                </div>
+                <div class="mobile-task-bar-group">
+                  <div class="bar-pair">
+                    <div class="performance-bar rgb-bar" style="--bar-height: 40%;">
+                      <span>40%</span>
+                    </div>
+                    <div class="performance-bar stereo-bar" style="--bar-height: 60%;">
+                      <span>60%</span>
+                    </div>
+                  </div>
+                  <div class="bar-label">Turn On Radio</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="mobile-performance-chart">
+            <div class="chart-title">Simulation</div>
+            <div class="chart-area">
+              <div class="chart-axis chart-axis-top">1.0</div>
+              <div class="chart-axis chart-axis-bottom">0.0</div>
+              <div class="mobile-task-bars">
+                <div class="mobile-task-bar-group">
+                  <div class="bar-pair">
+                    <div class="performance-bar rgb-bar sim-rgb-bar" style="--bar-height: 80%;">
+                      <span>80%</span>
+                    </div>
+                    <div class="performance-bar stereo-bar sim-stereo-bar" style="--bar-height: 90%;">
+                      <span>90%</span>
+                    </div>
+                  </div>
+                  <div class="bar-label">Open Door</div>
+                </div>
+                <div class="mobile-task-bar-group">
+                  <div class="bar-pair">
+                    <div class="performance-bar rgb-bar sim-rgb-bar" style="--bar-height: 70%;">
+                      <span>70%</span>
+                    </div>
+                    <div class="performance-bar stereo-bar sim-stereo-bar" style="--bar-height: 85%;">
+                      <span>85%</span>
+                    </div>
+                  </div>
+                  <div class="bar-label">Turn On Radio</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="performance-legend">
+            <span><i class="legend-swatch rgb-swatch"></i>RGB</span>
+            <span><i class="legend-swatch stereo-swatch"></i>Stereo</span>
+          </div>
+        </div>
+        <p class="performance-caption">
+          <strong>StereoPolicy-VLA (Pi0.5)</strong> performance on <strong>bimanual mobile manipulation tasks</strong> in both real-world and simulation settings (success rate over 20 trials).
+        </p>
+      </article>
+
+      <h3 class="title is-4 tabletop-deployment-title">Tabletop Manipulation</h3>
+      <div class="tabletop-demo-control">
+        <div class="tabletop-demo-copy">
+          <span class="tabletop-demo-kicker">Interactive demos</span>
+          <p>Select a tabletop task to inspect its synchronized third-person and wrist stereo views.</p>
+          <span class="deployment-note">Videos are shown from the original 3x recordings.</span>
+        </div>
+        <div class="task-selector" role="tablist" aria-label="Tabletop manipulation task selector">
+          <button class="task-selector-button is-active" id="task-tab-pnp-banana" type="button" role="tab" aria-selected="true" aria-controls="tabletop-task-pnp-banana" data-task="pnp-banana">
+            <span class="task-index">01</span>
+            <span>PnP Banana</span>
+          </button>
+          <button class="task-selector-button" id="task-tab-insert-toast" type="button" role="tab" aria-selected="false" aria-controls="tabletop-task-insert-toast" data-task="insert-toast">
+            <span class="task-index">02</span>
+            <span>Insert Toast</span>
+          </button>
+          <button class="task-selector-button" id="task-tab-plastic-cup-hang" type="button" role="tab" aria-selected="false" aria-controls="tabletop-task-plastic-cup-hang" data-task="plastic-cup-hang">
+            <span class="task-index">03</span>
+            <span>Plastic Cup Hang</span>
+          </button>
+          <button class="task-selector-button" id="task-tab-steel-cup-hang" type="button" role="tab" aria-selected="false" aria-controls="tabletop-task-steel-cup-hang" data-task="steel-cup-hang">
+            <span class="task-index">04</span>
+            <span>Steel Cup Hang</span>
+          </button>
+          <button class="task-selector-button" id="task-tab-glass-cup-hang" type="button" role="tab" aria-selected="false" aria-controls="tabletop-task-glass-cup-hang" data-task="glass-cup-hang">
+            <span class="task-index">05</span>
+            <span>Glass Cup Hang</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="deployment-grid tabletop-demo-panels">
+        <article class="deployment-task tabletop-task-panel is-active" id="tabletop-task-pnp-banana" role="tabpanel" aria-labelledby="task-tab-pnp-banana" data-task-panel="pnp-banana">
+          <h4>PnP Banana</h4>
+          <div class="deployment-views">
+            <div class="deployment-view-group">
+              <h5>Third-Person Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Banana third-person left camera deployment">
+                    <source src="media/deployments/pnp-banana-third-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Banana third-person right camera deployment">
+                    <source src="media/deployments/pnp-banana-third-right-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="deployment-view-group">
+              <h5>Wrist Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Banana wrist left camera deployment">
+                    <source src="media/deployments/pnp-banana-wrist-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Banana wrist right camera deployment">
+                    <source src="media/deployments/pnp-banana-wrist-right-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="deployment-task tabletop-task-panel" id="tabletop-task-insert-toast" role="tabpanel" aria-labelledby="task-tab-insert-toast" data-task-panel="insert-toast" hidden>
+          <h4>Insert Toast</h4>
+          <div class="deployment-views">
+            <div class="deployment-view-group">
+              <h5>Third-Person Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Insert Toast third-person left camera deployment">
+                    <source src="media/deployments/insert-toast-third-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Insert Toast third-person right camera deployment">
+                    <source src="media/deployments/insert-toast-third-right-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="deployment-view-group">
+              <h5>Wrist Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Insert Toast wrist left camera deployment">
+                    <source src="media/deployments/insert-toast-wrist-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Insert Toast wrist right camera deployment">
+                    <source src="media/deployments/insert-toast-wrist-right-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="deployment-task tabletop-task-panel" id="tabletop-task-plastic-cup-hang" role="tabpanel" aria-labelledby="task-tab-plastic-cup-hang" data-task-panel="plastic-cup-hang" hidden>
+          <h4>Plastic Cup Hang</h4>
+          <div class="deployment-views">
+            <div class="deployment-view-group">
+              <h5>Third-Person Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Plastic Cup Hang third-person left camera deployment">
+                    <source src="media/deployments/plastic-cup-hang-third-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Plastic Cup Hang third-person right camera deployment">
+                    <source src="media/deployments/plastic-cup-hang-third-right-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="deployment-view-group">
+              <h5>Wrist Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Plastic Cup Hang wrist left camera deployment">
+                    <source src="media/deployments/plastic-cup-hang-wrist-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Plastic Cup Hang wrist right camera deployment">
+                    <source src="media/deployments/plastic-cup-hang-wrist-right-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="deployment-task tabletop-task-panel" id="tabletop-task-steel-cup-hang" role="tabpanel" aria-labelledby="task-tab-steel-cup-hang" data-task-panel="steel-cup-hang" hidden>
+          <h4>Steel Cup Hang</h4>
+          <div class="deployment-views">
+            <div class="deployment-view-group">
+              <h5>Third-Person Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Steel Cup Hang third-person left camera deployment">
+                    <source src="media/deployments/steel-cup-hang-third-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Steel Cup Hang third-person right camera deployment">
+                    <source src="media/deployments/steel-cup-hang-third-right-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="deployment-view-group">
+              <h5>Wrist Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Steel Cup Hang wrist left camera deployment">
+                    <source src="media/deployments/steel-cup-hang-wrist-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Steel Cup Hang wrist right camera deployment">
+                    <source src="media/deployments/steel-cup-hang-wrist-right-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </article>
+        <article class="deployment-task tabletop-task-panel" id="tabletop-task-glass-cup-hang" role="tabpanel" aria-labelledby="task-tab-glass-cup-hang" data-task-panel="glass-cup-hang" hidden>
+          <h4>Glass Cup Hang</h4>
+          <div class="deployment-views">
+            <div class="deployment-view-group">
+              <h5>Third-Person Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang third-person left camera deployment">
+                    <source src="media/deployments/glass-cup-hang-third-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang third-person right camera deployment">
+                    <source src="media/deployments/glass-cup-hang-third-right-web.mp4?v=3" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+            <div class="deployment-view-group">
+              <h5>Wrist Stereo View</h5>
+              <div class="deployment-pair">
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang wrist left camera deployment">
+                    <source src="media/deployments/glass-cup-hang-wrist-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Left Camera</figcaption>
+                </figure>
+                <figure class="deployment-item">
+                  <video autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang wrist right camera deployment">
+                    <source src="media/deployments/glass-cup-hang-wrist-right-web.mp4" type="video/mp4">
+                  </video>
+                  <figcaption>Right Camera</figcaption>
+                </figure>
+              </div>
+            </div>
+          </div>
+        </article>
+      </div>
+
+      <div class="deployment-performance">
+        <h3 class="title is-4">Performance</h3>
+
+        <article class="performance-card">
+          <h4>Tabletop Manipulation</h4>
+          <div class="performance-table-wrap">
+            <table class="performance-table">
+              <thead>
+                <tr>
+                  <th>Method</th>
+                  <th>Banana<br>PnP</th>
+                  <th>Toast<br>Insert</th>
+                  <th>Plastic<br>Cup Hang</th>
+                  <th>Steel<br>Cup Hang</th>
+                  <th>Glass<br>Cup Hang</th>
+                  <th>AVG SR (%)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>RGB</th>
+                  <td>12/20</td>
+                  <td>7/20</td>
+                  <td>12/20</td>
+                  <td>10/20</td>
+                  <td>1/20</td>
+                  <td>42.0%</td>
+                </tr>
+                <tr>
+                  <th>RGBD</th>
+                  <td>14/20</td>
+                  <td>8/20</td>
+                  <td>11/20</td>
+                  <td>8/20</td>
+                  <td>0/20</td>
+                  <td>41.0%</td>
+                </tr>
+                <tr>
+                  <th>RGBD-3DDA</th>
+                  <td>13/20</td>
+                  <td>9/20</td>
+                  <td>13/20</td>
+                  <td>10/20</td>
+                  <td>0/20</td>
+                  <td>45.0%</td>
+                </tr>
+                <tr>
+                  <th>PCD-PointNet</th>
+                  <td>7/20</td>
+                  <td>0/20</td>
+                  <td>5/20</td>
+                  <td>2/20</td>
+                  <td>0/20</td>
+                  <td>14.0%</td>
+                </tr>
+                <tr>
+                  <th>PCD-DP3</th>
+                  <td>11/20</td>
+                  <td>3/20</td>
+                  <td>8/20</td>
+                  <td>5/20</td>
+                  <td>0/20</td>
+                  <td>27.0%</td>
+                </tr>
+                <tr>
+                  <th>MultiView</th>
+                  <td>13/20</td>
+                  <td>8/20</td>
+                  <td>13/20</td>
+                  <td>9/20</td>
+                  <td>1/20</td>
+                  <td>44.0%</td>
+                </tr>
+                <tr class="performance-best-row">
+                  <th>StereoPolicy-DP</th>
+                  <td>16/20</td>
+                  <td>12/20</td>
+                  <td>15/20</td>
+                  <td>13/20</td>
+                  <td>3/20</td>
+                  <td>59.0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="performance-caption">
+            <strong>Real-World Tabletop Task Performance.</strong> <strong>StereoPolicy-DP</strong> consistently outperforms other visual modalities. PCD performs worst in all real tasks; both RGBD and PCD fail on glass cup hang tasks.
+          </p>
+        </article>
+
+      </div>
+
+  </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-widescreen">
+    <div class="rows">
+      <h2 class="title is-3">Baseline Modalities Failure Cases</h2>
+      <h3 class="title is-4 baseline-failure-subtitle">Mobile Manipulation</h3>
+      <div class="baseline-failure-grid">
+        <article class="baseline-failure-item">
+          <h4>Failure Case 1</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Turn On Radio mobile manipulation failure case 1">
+            <source src="media/deployments/radio-fail-4-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Missed radio contact.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 2</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Turn On Radio mobile manipulation failure case 2">
+            <source src="media/deployments/radio-fail-5-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Button press drifts.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 3</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Toast mobile manipulation failure case">
+            <source src="media/deployments/bread-fail-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Toast placement fails.</p>
+        </article>
+      </div>
+
+      <h3 class="title is-4 baseline-failure-subtitle">Tabletop Manipulation</h3>
+      <p class="failure-speed-note">Tabletop failure videos are shown at 2x speed.</p>
+      <div class="baseline-failure-grid tabletop-failure-grid">
+        <article class="baseline-failure-item">
+          <h4>Failure Case 1</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Tabletop toast failure case 1">
+            <source src="media/deployments/fail-toast-1-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Toast misses slot.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 2</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Tabletop toast failure case 2">
+            <source src="media/deployments/fail-toast-3-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Insertion misaligned.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 3</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Tabletop cup hang failure case 1">
+            <source src="media/deployments/fail-cup-1-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Cup grasp misses.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 4</h4>
+          <video autoplay loop muted playsinline preload="metadata" aria-label="Tabletop cup hang failure case 2">
+            <source src="media/deployments/fail-cup-2-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Cup lift fails.</p>
+        </article>
+        <article class="baseline-failure-item">
+          <h4>Failure Case 5</h4>
+          <video class="brightness-aligned-video failure-glass-bright-video" autoplay loop muted playsinline preload="metadata" aria-label="Tabletop glass cup failure case">
+            <source src="media/deployments/fail-glass-1-web.mp4" type="video/mp4">
+          </video>
+          <p class="failure-caption">Transparent cup missed.</p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-widescreen">
+    <div class="rows">
+      <h2 class="title is-3">Simulation Benchmarks</h2>
+      <figure class="simulation-benchmarks-figure">
+        <img src="media/figures/simulation-benchmarks.jpg" alt="Simulation benchmarks across OmniGibson, RoboCasa, and RoboMimic">
+      </figure>
+
+      <div class="simulation-performance">
+        <article class="performance-card">
+          <h4>Diffusion Policy Performance</h4>
+          <div class="performance-table-wrap">
+            <table class="performance-table simulation-performance-table">
+              <thead>
+                <tr>
+                  <th rowspan="3">Method</th>
+                  <th colspan="8">OmniGibson</th>
+                  <th colspan="6">RoboMimic</th>
+                </tr>
+                <tr>
+                  <th colspan="2">Strawberry</th>
+                  <th colspan="2">Pour Water</th>
+                  <th colspan="2">Open Door</th>
+                  <th colspan="2">Turn On Radio</th>
+                  <th colspan="2">Tool Hang</th>
+                  <th colspan="2">Square</th>
+                  <th colspan="2">Transport</th>
+                </tr>
+                <tr>
+                  <th>100</th>
+                  <th>200</th>
+                  <th>100</th>
+                  <th>200</th>
+                  <th>200</th>
+                  <th>300</th>
+                  <th>200</th>
+                  <th>300</th>
+                  <th>100</th>
+                  <th>200</th>
+                  <th>100</th>
+                  <th>200</th>
+                  <th>100</th>
+                  <th>200</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th>RGB</th>
+                  <td>59.0%</td>
+                  <td>88.0%</td>
+                  <td>10.0%</td>
+                  <td>46.0%</td>
+                  <td>26.0%</td>
+                  <td>77.0%</td>
+                  <td>42.0%</td>
+                  <td>71.0%</td>
+                  <td>53.0%</td>
+                  <td>90.0%</td>
+                  <td>74.0%</td>
+                  <td>98.0%</td>
+                  <td>92.0%</td>
+                  <td>94.0%</td>
+                </tr>
+                <tr>
+                  <th>RGB-D</th>
+                  <td>63.0%</td>
+                  <td>85.0%</td>
+                  <td>16.0%</td>
+                  <td>52.0%</td>
+                  <td>31.0%</td>
+                  <td>80.0%</td>
+                  <td>47.0%</td>
+                  <td>73.0%</td>
+                  <td>56.0%</td>
+                  <td>88.0%</td>
+                  <td>79.0%</td>
+                  <td>92.0%</td>
+                  <td><strong>94.0%</strong></td>
+                  <td>94.0%</td>
+                </tr>
+                <tr>
+                  <th>RGBD-3DDA</th>
+                  <td>74.0%</td>
+                  <td>93.0%</td>
+                  <td>26.0%</td>
+                  <td>61.0%</td>
+                  <td>48.0%</td>
+                  <td><strong>100.0%</strong></td>
+                  <td>46.0%</td>
+                  <td>75.0%</td>
+                  <td>84.0%</td>
+                  <td>92.0%</td>
+                  <td>83.0%</td>
+                  <td>97.0%</td>
+                  <td><strong>94.0%</strong></td>
+                  <td><strong>96.0%</strong></td>
+                </tr>
+                <tr>
+                  <th>PCD-DP3</th>
+                  <td>45.0%</td>
+                  <td>63.0%</td>
+                  <td>3.0%</td>
+                  <td>31.0%</td>
+                  <td>30.0%</td>
+                  <td>69.0%</td>
+                  <td>35.0%</td>
+                  <td>64.0%</td>
+                  <td>40.0%</td>
+                  <td>76.0%</td>
+                  <td>69.0%</td>
+                  <td>88.0%</td>
+                  <td>63.0%</td>
+                  <td>72.0%</td>
+                </tr>
+                <tr>
+                  <th>MultiView</th>
+                  <td>68.0%</td>
+                  <td>89.0%</td>
+                  <td>21.0%</td>
+                  <td>52.0%</td>
+                  <td>31.0%</td>
+                  <td>75.0%</td>
+                  <td>43.0%</td>
+                  <td>71.0%</td>
+                  <td>54.0%</td>
+                  <td>92.0%</td>
+                  <td>78.0%</td>
+                  <td>96.0%</td>
+                  <td>92.0%</td>
+                  <td>94.0%</td>
+                </tr>
+                <tr class="performance-best-row">
+                  <th>StereoPolicy-DP</th>
+                  <td>82.0%</td>
+                  <td>100.0%</td>
+                  <td>34.0%</td>
+                  <td>70.0%</td>
+                  <td>57.0%</td>
+                  <td>100.0%</td>
+                  <td>55.0%</td>
+                  <td>82.0%</td>
+                  <td>94.0%</td>
+                  <td>96.0%</td>
+                  <td>88.0%</td>
+                  <td>100.0%</td>
+                  <td>94.0%</td>
+                  <td>96.0%</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="performance-caption">
+            <strong>Simulation Task Performance of Diffusion Policies over Different Visual Modalities.</strong> Stereo input consistently improves performance, especially under low-data regime.
+          </p>
+        </article>
+
+        <article class="performance-card">
+          <h4>VLA Average Performance on RoboCasa-Kitchen 24 Tasks</h4>
+          <div class="vla-chart-grid" aria-label="Average StereoPolicy-VLA performance on RoboCasa-Kitchen 24 tasks">
+            <figure class="vla-line-chart">
+              <figcaption>PI0.5</figcaption>
+              <svg viewBox="0 0 360 230" role="img" aria-label="PI0.5 RGB and Stereo success rates">
+                <line class="chart-grid-line" x1="55" y1="35" x2="330" y2="35"></line>
+                <line class="chart-axis-line" x1="55" y1="170" x2="330" y2="170"></line>
+                <line class="chart-axis-line" x1="55" y1="35" x2="55" y2="170"></line>
+                <text class="chart-y-label" x="18" y="42">75%</text>
+                <text class="chart-y-label" x="18" y="174">40%</text>
+                <polyline class="chart-series rgb-series" points="95,136.4 195,63.4 305,53.1"></polyline>
+                <polyline class="chart-series stereo-series" points="95,124.8 195,48.3 305,37.3"></polyline>
+                <g class="chart-points rgb-points">
+                  <circle cx="95" cy="136.4" r="2.2"></circle>
+                  <circle cx="195" cy="63.4" r="2.2"></circle>
+                  <circle cx="305" cy="53.1" r="2.2"></circle>
+                </g>
+                <g class="chart-points stereo-points">
+                  <circle cx="95" cy="124.8" r="2.2"></circle>
+                  <circle cx="195" cy="48.3" r="2.2"></circle>
+                  <circle cx="305" cy="37.3" r="2.2"></circle>
+                </g>
+                <text class="chart-value" x="65" y="151">48.71</text>
+                <text class="chart-value" x="65" y="111">51.72</text>
+                <text class="chart-value" x="176" y="88">67.64</text>
+                <text class="chart-value" x="176" y="36">71.54</text>
+                <text class="chart-value" x="286" y="76">70.31</text>
+                <text class="chart-value" x="286" y="28">74.40</text>
+                <text class="chart-x-label" x="88" y="198">30</text>
+                <text class="chart-x-label" x="184" y="198">100</text>
+                <text class="chart-x-label" x="294" y="198">300</text>
+                <text class="chart-x-title" x="180" y="222">Number of Demos</text>
+                <g class="chart-inline-legend">
+                  <circle class="rgb-point" cx="252" cy="125" r="4"></circle>
+                  <text x="264" y="130">RGB</text>
+                  <circle class="stereo-point" cx="252" cy="145" r="4"></circle>
+                  <text x="264" y="150">Stereo</text>
+                </g>
+              </svg>
+            </figure>
+            <figure class="vla-line-chart">
+              <figcaption>GROOT-N1.5</figcaption>
+              <svg viewBox="0 0 360 230" role="img" aria-label="GROOT-N1.5 RGB and Stereo success rates">
+                <line class="chart-grid-line" x1="55" y1="35" x2="330" y2="35"></line>
+                <line class="chart-axis-line" x1="55" y1="170" x2="330" y2="170"></line>
+                <line class="chart-axis-line" x1="55" y1="35" x2="55" y2="170"></line>
+                <text class="chart-y-label" x="18" y="42">75%</text>
+                <text class="chart-y-label" x="18" y="174">40%</text>
+                <polyline class="chart-series rgb-series" points="95,150.8 195,79.0 305,76.3"></polyline>
+                <polyline class="chart-series stereo-series" points="95,142.5 195,69.1 305,63.9"></polyline>
+                <g class="chart-points rgb-points">
+                  <circle cx="95" cy="150.8" r="2.2"></circle>
+                  <circle cx="195" cy="79.0" r="2.2"></circle>
+                  <circle cx="305" cy="76.3" r="2.2"></circle>
+                </g>
+                <g class="chart-points stereo-points">
+                  <circle cx="95" cy="142.5" r="2.2"></circle>
+                  <circle cx="195" cy="69.1" r="2.2"></circle>
+                  <circle cx="305" cy="63.9" r="2.2"></circle>
+                </g>
+                <text class="chart-value" x="65" y="166">44.98</text>
+                <text class="chart-value" x="68" y="130">47.12</text>
+                <text class="chart-value" x="176" y="101">63.58</text>
+                <text class="chart-value" x="176" y="57">66.17</text>
+                <text class="chart-value" x="284" y="98">64.30</text>
+                <text class="chart-value" x="283" y="53">67.50</text>
+                <text class="chart-x-label" x="88" y="198">30</text>
+                <text class="chart-x-label" x="184" y="198">100</text>
+                <text class="chart-x-label" x="294" y="198">300</text>
+                <text class="chart-x-title" x="180" y="222">Number of Demos</text>
+                <g class="chart-inline-legend">
+                  <circle class="rgb-point" cx="252" cy="125" r="4"></circle>
+                  <text x="264" y="130">RGB</text>
+                  <circle class="stereo-point" cx="252" cy="145" r="4"></circle>
+                  <text x="264" y="150">Stereo</text>
+                </g>
+              </svg>
+            </figure>
+          </div>
+          <p class="performance-caption">
+            <strong>Average StereoPolicy-VLA Performance on RoboCasa-Kitchen 24 Tasks.</strong>
+          </p>
+        </article>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+</body>
+</html>
