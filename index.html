@@ -58,11 +58,7 @@
             Preprint
           </div>
           <div class="publication-link-row">
-            <a class="publication-link-button" href="#">
-              <span class="icon"><i class="fas fa-file-pdf"></i></span>
-              <span>PDF</span>
-            </a>
-            <a class="publication-link-button" href="#">
+            <a class="publication-link-button" href="https://arxiv.org/abs/2605.09989">
               <span class="icon"><i class="ai ai-arxiv"></i></span>
               <span>arXiv</span>
             </a>
@@ -76,11 +72,11 @@
             </a>
             <a class="publication-link-button" href="#">
               <span class="icon"><i class="fas fa-file-pdf"></i></span>
-              <span>Appendix</span>
+              <span>Paper</span>
             </a>
             <a class="publication-link-button" href="#">
               <span class="icon"><i class="fas fa-file-pdf"></i></span>
-              <span>Paper</span>
+              <span>Appendix</span>
             </a>
           </div>
         </div>
@@ -263,6 +259,10 @@
                 </div>
               </div>
             </div>
+            <div class="performance-legend chart-legend">
+              <span><i class="legend-swatch rgb-swatch"></i>RGB</span>
+              <span><i class="legend-swatch stereo-swatch"></i>Stereo</span>
+            </div>
           </div>
           <div class="mobile-performance-chart">
             <div class="chart-title">Simulation</div>
@@ -294,10 +294,10 @@
                 </div>
               </div>
             </div>
-          </div>
-          <div class="performance-legend">
-            <span><i class="legend-swatch rgb-swatch"></i>RGB</span>
-            <span><i class="legend-swatch stereo-swatch"></i>Stereo</span>
+            <div class="performance-legend chart-legend">
+              <span><i class="legend-swatch sim-rgb-swatch"></i>RGB</span>
+              <span><i class="legend-swatch sim-stereo-swatch"></i>Stereo</span>
+            </div>
           </div>
         </div>
         <p class="performance-caption">
@@ -641,21 +641,21 @@
           <video autoplay loop muted playsinline preload="metadata" aria-label="Turn On Radio mobile manipulation failure case 1">
             <source src="media/deployments/radio-fail-4-web.mp4" type="video/mp4">
           </video>
-          <p class="failure-caption">Missed radio contact.</p>
+          <p class="failure-caption">Imprecise radio-handle grasp.</p>
         </article>
         <article class="baseline-failure-item">
           <h4>Failure Case 2</h4>
           <video autoplay loop muted playsinline preload="metadata" aria-label="Turn On Radio mobile manipulation failure case 2">
             <source src="media/deployments/radio-fail-5-web.mp4" type="video/mp4">
           </video>
-          <p class="failure-caption">Button press drifts.</p>
+          <p class="failure-caption">Imprecise button press.</p>
         </article>
         <article class="baseline-failure-item">
           <h4>Failure Case 3</h4>
           <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Toast mobile manipulation failure case">
             <source src="media/deployments/bread-fail-web.mp4" type="video/mp4">
           </video>
-          <p class="failure-caption">Toast placement fails.</p>
+          <p class="failure-caption">Imprecise toast grasp.</p>
         </article>
       </div>
 
@@ -688,7 +688,7 @@
           <video autoplay loop muted playsinline preload="metadata" aria-label="Tabletop cup hang failure case 2">
             <source src="media/deployments/fail-cup-2-web.mp4" type="video/mp4">
           </video>
-          <p class="failure-caption">Cup lift fails.</p>
+          <p class="failure-caption">Imprecise handle insertion.</p>
         </article>
         <article class="baseline-failure-item">
           <h4>Failure Case 5</h4>
@@ -943,6 +943,23 @@
           </p>
         </article>
       </div>
+    </div>
+  </div>
+</section>
+
+<section class="citation-section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Citation</h2>
+    <div class="citation-card">
+<pre><code>@misc{han2026stereopolicyimprovingroboticmanipulation,
+      title={StereoPolicy: Improving Robotic Manipulation Policies via Stereo Perception}, 
+      author={Evans Han and Yunfan Jiang and Yingke Wang and Haoyue Xiao and Huang Huang and Jianwen Xie and Jiajun Wu and Li Fei-Fei and Ruohan Zhang},
+      year={2026},
+      eprint={2605.09989},
+      archivePrefix={arXiv},
+      primaryClass={cs.RO},
+      url={https://arxiv.org/abs/2605.09989}, 
+}</code></pre>
     </div>
   </div>
 </section>
