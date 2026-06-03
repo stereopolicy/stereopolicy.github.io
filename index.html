@@ -19,7 +19,7 @@
   <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
   <link rel="stylesheet"
         href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
-  <link rel="stylesheet" href="./static/css/index.css?v=30">
+  <link rel="stylesheet" href="./static/css/index.css?v=32">
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script defer src="./static/js/fontawesome.all.min.js"></script>
@@ -70,11 +70,11 @@
               <span class="icon publication-x-icon">X</span>
               <span>tl;dr</span>
             </a>
-            <a class="publication-link-button" href="#">
+            <a class="publication-link-button" href="media/papers/stereopolicy-paper.pdf">
               <span class="icon"><i class="fas fa-file-pdf"></i></span>
               <span>Paper</span>
             </a>
-            <a class="publication-link-button" href="#">
+            <a class="publication-link-button" href="media/papers/stereopolicy-appendix.pdf">
               <span class="icon"><i class="fas fa-file-pdf"></i></span>
               <span>Appendix</span>
             </a>
@@ -93,7 +93,7 @@
         <h2 class="title is-3">Abstract</h2>
         <div class="content has-text-justified">
           <p>
-            Recent advances in robot imitation learning have yielded powerful visuomotor policies capable of manipulating a wide variety of objects directly from monocular visual inputs. However, monocular observations inherently lack reliable depth cues and spatial awareness, which are critical for precise manipulation in cluttered or geometrically complex scenes. To address this limitation, we introduce <strong>StereoPolicy</strong>, a new visuomotor policy learning framework that directly leverages synchronized stereo image pairs to strengthen geometric reasoning, without requiring explicit 3D reconstruction or camera calibration. StereoPolicy employs pretrained 2D vision encoders to process each image independently and fuses the resulting representations through a Stereo Transformer. This design implicitly captures spatial correspondence and disparity cues. The framework integrates seamlessly with diffusion-based and pretrained vision-language-action (VLA) policies, delivering consistent improvements over RGB, RGB-D, point cloud, and multi-view baselines across three simulation benchmarks: RoboMimic, RoboCasa, and OmniGibson. We further validate StereoPolicy on real-robot experiments spanning both tabletop and bimanual mobile manipulation settings. Our results underscore stereo vision as a scalable and robust modality that bridges 2D pretrained representations with 3D geometric understanding for robotic manipulation.
+            Recent advances in robot imitation learning have produced powerful visuomotor policies that manipulate diverse objects from visual inputs. However, monocular observations lack depth information, which is critical for precise manipulation in cluttered or geometrically complex scenes. Explicit depth maps and point clouds are often noisy and fragile in real-world manipulation. We introduce <strong>StereoPolicy</strong>, a visuomotor policy learning framework that directly leverages synchronized stereo image pairs to improve geometric reasoning without constructing explicit 3D representations. StereoPolicy processes each image with pretrained 2D vision encoders and fuses left-right features through a cross-attention-based Stereo Transformer, capturing spatial correspondence and disparity cues implicitly. The framework integrates with diffusion-based and pretrained vision-language-action (VLA) policies, delivering consistent improvements over RGB, RGB-D, point cloud, and multi-view baselines across three simulation benchmarks and seven real-robot tabletop and bimanual mobile manipulation tasks. Our results show that stereo vision bridges 2D pretrained representations and 3D geometric understanding for robotic manipulation.
           </p>
         </div>
       </div>
@@ -116,36 +116,86 @@
   <div class="container is-max-widescreen">
     <div class="fragility-heading">
       <h2 class="title is-3">RGB-D and PCD are fragile in real world deployment</h2>
+    </div>
+    <div class="fragility-zoom-row">
       <span class="zoom-hint" aria-label="Hover GIFs to zoom">
         <span class="icon"><i class="fas fa-search-plus"></i></span>
         <span>Hover to zoom</span>
       </span>
     </div>
-    <div class="fragility-grid">
-      <figure class="fragility-item fragility-depth" data-note="cup handle missing">
-        <div class="fragility-frame" data-note="cup handle missing">
-          <img src="media/figures/depth-real-1.gif" alt="Regular Cup Hang task depth visualization">
+    <div class="fragility-task-grid">
+      <article class="fragility-task">
+        <h3>Regular Cup Hang</h3>
+        <div class="fragility-reference">
+          <h4>External-View Stereo RGB Reference</h4>
+          <div class="fragility-reference-grid">
+            <figure class="fragility-reference-item">
+              <video autoplay loop muted playsinline preload="metadata" aria-label="Regular Cup Hang external-view stereo RGB left camera reference">
+                <source src="media/deployments/plastic-cup-hang-third-web.mp4?v=3" type="video/mp4">
+              </video>
+              <figcaption>Left Camera</figcaption>
+            </figure>
+            <figure class="fragility-reference-item">
+              <video autoplay loop muted playsinline preload="metadata" aria-label="Regular Cup Hang external-view stereo RGB right camera reference">
+                <source src="media/deployments/plastic-cup-hang-third-right-web.mp4?v=3" type="video/mp4">
+              </video>
+              <figcaption>Right Camera</figcaption>
+            </figure>
+          </div>
         </div>
-        <figcaption>Regular Cup Hang Task: Depth Visualization</figcaption>
-      </figure>
-      <figure class="fragility-item fragility-depth" data-note="entire cup missing">
-        <div class="fragility-frame" data-note="entire cup missing">
-          <img src="media/figures/depth-real-2.gif" alt="Glass Cup Hang task depth visualization">
+        <div class="fragility-grid">
+          <figure class="fragility-item fragility-depth" data-note="cup handle missing">
+            <div class="fragility-frame" data-note="cup handle missing">
+              <img src="media/figures/depth-real-1.gif" alt="Regular Cup Hang task depth visualization">
+            </div>
+            <figcaption>Depth Visualization</figcaption>
+            <p class="fragility-issue">Depth misses the cup handle and thin rack geometry.</p>
+          </figure>
+          <figure class="fragility-item fragility-pcd" data-note="object deformation">
+            <div class="fragility-frame" data-note="object deformation">
+              <img src="media/figures/pcd-real-2.gif?v=2" alt="Regular Cup Hang task point cloud visualization">
+            </div>
+            <figcaption>Point Cloud (PCD) Visualization</figcaption>
+            <p class="fragility-issue">PCD deforms the cup and rack structure.</p>
+          </figure>
         </div>
-        <figcaption>Glass Cup Hang Task: Depth Visualization</figcaption>
-      </figure>
-      <figure class="fragility-item fragility-pcd" data-note="object deformation">
-        <div class="fragility-frame" data-note="object deformation">
-          <img src="media/figures/pcd-real-2.gif?v=2" alt="Regular Cup Hang task point cloud visualization">
+      </article>
+      <article class="fragility-task">
+        <h3>Glass Cup Hang</h3>
+        <div class="fragility-reference">
+          <h4>External-View Stereo RGB Reference</h4>
+          <div class="fragility-reference-grid">
+            <figure class="fragility-reference-item">
+              <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang external-view stereo RGB left camera reference">
+                <source src="media/deployments/glass-cup-hang-third-web.mp4?v=3" type="video/mp4">
+              </video>
+              <figcaption>Left Camera</figcaption>
+            </figure>
+            <figure class="fragility-reference-item">
+              <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang external-view stereo RGB right camera reference">
+                <source src="media/deployments/glass-cup-hang-third-right-web.mp4?v=3" type="video/mp4">
+              </video>
+              <figcaption>Right Camera</figcaption>
+            </figure>
+          </div>
         </div>
-        <figcaption>Regular Cup Hang Task: Point Cloud (PCD) Visualization</figcaption>
-      </figure>
-      <figure class="fragility-item fragility-pcd" data-note="entire cup missing">
-        <div class="fragility-frame" data-note="entire cup missing">
-          <img src="media/figures/pcd-real-1.gif?v=2" alt="Glass Cup Hang task point cloud visualization">
+        <div class="fragility-grid">
+          <figure class="fragility-item fragility-depth" data-note="entire cup missing">
+            <div class="fragility-frame" data-note="entire cup missing">
+              <img src="media/figures/depth-real-2.gif" alt="Glass Cup Hang task depth visualization">
+            </div>
+            <figcaption>Depth Visualization</figcaption>
+            <p class="fragility-issue">Depth misses the transparent cup surface.</p>
+          </figure>
+          <figure class="fragility-item fragility-pcd" data-note="entire cup missing">
+            <div class="fragility-frame" data-note="entire cup missing">
+              <img src="media/figures/pcd-real-1.gif?v=2" alt="Glass Cup Hang task point cloud visualization">
+            </div>
+            <figcaption>Point Cloud (PCD) Visualization</figcaption>
+            <p class="fragility-issue">PCD loses most of the glass cup geometry.</p>
+          </figure>
         </div>
-        <figcaption>Glass Cup Hang Task: Point Cloud (PCD) Visualization</figcaption>
-      </figure>
+      </article>
     </div>
   </div>
 </section>
@@ -170,7 +220,7 @@
           <span>Hover a module, then click to highlight it and read how it works.</span>
         </div>
         <div class="overview-interactive" aria-label="Interactive StereoPolicy overview">
-          <img src="media/figures/stereopolicy-overview.jpg?v=2" class="interpolation-image" alt="Overview of StereoPolicy pipeline" />
+          <img src="media/figures/stereopolicy-overview.jpg?v=4" class="interpolation-image" alt="Overview of StereoPolicy pipeline" />
           <button class="overview-hotspot overview-hotspot-compact overview-hotspot-feature-dp" type="button" aria-label="StereoPolicy-DP stereo feature extractor" data-title="StereoPolicy-DP Feature Extractor" data-description="StereoPolicy-DP fuses synchronized left/right images into geometry-aware observation tokens. These stereo tokens are concatenated with low-dimensional proprioception and condition a diffusion policy trained from scratch for each task."></button>
           <button class="overview-hotspot overview-hotspot-compact overview-hotspot-diffusion-policy" type="button" aria-label="Diffusion policy action generator" data-title="Diffusion Policy Backbone" data-description="The diffusion policy treats action generation as denoising: it starts from noisy action trajectories and iteratively refines them into continuous robot actions, conditioned on the fused stereo observation."></button>
           <button class="overview-hotspot overview-hotspot-compact overview-hotspot-feature-vla" type="button" aria-label="StereoPolicy-VLA stereo feature extractor plugin" data-title="StereoPolicy-VLA Plugin" data-description="For pretrained VLA models, StereoPolicy adds a lightweight stereo feature extractor on top of the existing vision encoder, replacing monocular visual embeddings with stereo-aware features while preserving the VLA backbone."></button>
@@ -341,7 +391,7 @@
           <h4>PnP Banana</h4>
           <div class="deployment-views">
             <div class="deployment-view-group">
-              <h5>Third-Person Stereo View</h5>
+              <h5>External Stereo View</h5>
               <div class="deployment-pair">
                 <figure class="deployment-item">
                   <video autoplay loop muted playsinline preload="metadata" aria-label="PnP Banana third-person left camera deployment">
@@ -380,7 +430,7 @@
           <h4>Insert Toast</h4>
           <div class="deployment-views">
             <div class="deployment-view-group">
-              <h5>Third-Person Stereo View</h5>
+              <h5>External Stereo View</h5>
               <div class="deployment-pair">
                 <figure class="deployment-item">
                   <video autoplay loop muted playsinline preload="metadata" aria-label="Insert Toast third-person left camera deployment">
@@ -419,7 +469,7 @@
           <h4>Plastic Cup Hang</h4>
           <div class="deployment-views">
             <div class="deployment-view-group">
-              <h5>Third-Person Stereo View</h5>
+              <h5>External Stereo View</h5>
               <div class="deployment-pair">
                 <figure class="deployment-item">
                   <video autoplay loop muted playsinline preload="metadata" aria-label="Plastic Cup Hang third-person left camera deployment">
@@ -458,7 +508,7 @@
           <h4>Steel Cup Hang</h4>
           <div class="deployment-views">
             <div class="deployment-view-group">
-              <h5>Third-Person Stereo View</h5>
+              <h5>External Stereo View</h5>
               <div class="deployment-pair">
                 <figure class="deployment-item">
                   <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Steel Cup Hang third-person left camera deployment">
@@ -497,7 +547,7 @@
           <h4>Glass Cup Hang</h4>
           <div class="deployment-views">
             <div class="deployment-view-group">
-              <h5>Third-Person Stereo View</h5>
+              <h5>External Stereo View</h5>
               <div class="deployment-pair">
                 <figure class="deployment-item">
                   <video class="brightness-aligned-video" autoplay loop muted playsinline preload="metadata" aria-label="Glass Cup Hang third-person left camera deployment">

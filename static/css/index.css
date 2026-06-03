@@ -464,6 +464,97 @@ body {
   margin-bottom: 0;
 }
 
+.fragility-task-grid {
+  display: grid;
+  gap: 1.4rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  position: relative;
+}
+
+.fragility-task-grid::before {
+  background: #efc8c0;
+  bottom: 0;
+  content: "";
+  left: 50%;
+  position: absolute;
+  top: 2.15rem;
+  transform: translateX(-50%);
+  width: 1px;
+}
+
+.fragility-task {
+  min-width: 0;
+}
+
+.fragility-task + .fragility-task {
+  padding-left: 1.4rem;
+}
+
+.fragility-task:first-child {
+  padding-right: 1.4rem;
+}
+
+.fragility-task > h3 {
+  color: #333;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 0.55rem;
+  text-align: center;
+}
+
+.fragility-reference {
+  margin: 0 auto 0.9rem;
+}
+
+.fragility-reference h3,
+.fragility-reference h4 {
+  color: #333;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.92rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 0 0 0.5rem;
+  text-align: center;
+}
+
+.fragility-reference-grid {
+  display: grid;
+  gap: 0.85rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.fragility-reference-item {
+  margin: 0;
+}
+
+.fragility-reference-item video {
+  aspect-ratio: 520 / 376;
+  background: #f7f7f7;
+  border: 1px solid #e5e5e5;
+  display: block;
+  object-fit: cover;
+  object-position: left center;
+  width: 100%;
+}
+
+.fragility-reference-item figcaption {
+  color: #333;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.25;
+  margin-top: 0.45rem;
+  text-align: center;
+}
+
+.fragility-zoom-row {
+  display: flex;
+  justify-content: center;
+  margin: 0 0 1.1rem;
+}
+
 .zoom-hint {
   align-items: center;
   background: #fff7f5;
@@ -490,7 +581,7 @@ body {
 .fragility-grid {
   display: grid;
   gap: 0.85rem;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .fragility-item {
@@ -523,6 +614,17 @@ body {
   font-weight: 600;
   line-height: 1.25;
   margin-top: 0.45rem;
+  text-align: center;
+}
+
+.fragility-issue {
+  color: #555;
+  font-family: 'Google Sans', sans-serif;
+  font-size: 0.76rem;
+  font-weight: 500;
+  line-height: 1.3;
+  margin: 0.28rem auto 0;
+  max-width: 15rem;
   text-align: center;
 }
 
@@ -578,17 +680,71 @@ body {
     flex-direction: column;
   }
 
+  .fragility-task-grid {
+    gap: 1.1rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fragility-task + .fragility-task {
+    padding-left: 1.1rem;
+  }
+
+  .fragility-task:first-child {
+    padding-right: 1.1rem;
+  }
+
+  .fragility-task > h3 {
+    font-size: 0.9rem;
+  }
+
+  .fragility-reference-grid {
+    gap: 0.65rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .fragility-reference h3,
+  .fragility-reference h4 {
+    font-size: 0.72rem;
+  }
+
+  .fragility-reference-item figcaption {
+    font-size: 0.66rem;
+  }
+
   .fragility-grid {
     gap: 0.65rem;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .fragility-item figcaption {
     font-size: 0.66rem;
   }
+
+  .fragility-issue {
+    font-size: 0.62rem;
+  }
 }
 
 @media screen and (max-width: 520px) {
+  .fragility-task-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .fragility-task-grid::before {
+    display: none;
+  }
+
+  .fragility-task,
+  .fragility-task:first-child,
+  .fragility-task + .fragility-task {
+    padding-left: 0;
+    padding-right: 0;
+  }
+
+  .fragility-reference-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .fragility-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
