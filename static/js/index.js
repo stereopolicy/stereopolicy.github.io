@@ -96,53 +96,7 @@ $(document).ready(function() {
       this.style.setProperty("--note-y", "calc(100% - 0.75rem)");
     });
 
-    var overviewDefaultTitle = $("#overview-info-panel h3").text();
-    var overviewDefaultDescription = $("#overview-info-panel p").text();
 
-    function resetOverviewHighlight() {
-      $(".overview-hotspot").removeClass("is-active");
-      $(".overview-target").removeClass("is-active");
-      $("#overview-info-panel h3").text(overviewDefaultTitle);
-      $("#overview-info-panel p").text(overviewDefaultDescription);
-    }
-
-    $(".overview-hotspot").on("click", function(event) {
-      event.stopPropagation();
-      var target = this.getAttribute("data-target");
-      var title = this.getAttribute("data-title") || "StereoPolicy module";
-      var description = this.getAttribute("data-description") || "";
-
-      $(".overview-hotspot").removeClass("is-active");
-      $(".overview-target").removeClass("is-active");
-      $(this).addClass("is-active");
-      if (target) {
-        $('.overview-target[data-target-id="' + target + '"]').addClass("is-active");
-      }
-      $("#overview-info-panel h3").text(title);
-      $("#overview-info-panel p").text(description);
-    });
-
-    $(".overview-interactive").on("click", function(event) {
-      if (!$(event.target).closest(".overview-hotspot").length) {
-        resetOverviewHighlight();
-      }
-    });
-
-    $(document).on("click", function(event) {
-      var isOverviewUi = $(event.target).closest(".overview-interactive, .overview-info-panel, .overview-click-note").length > 0;
-      if (!isOverviewUi) {
-        resetOverviewHighlight();
-      }
-    });
-
-    $(".overview-hotspot").on("mouseenter", function() {
-      $(".overview-hotspot").not(this).removeClass("is-hovering");
-      $(this).addClass("is-hovering");
-    });
-
-	    $(".overview-hotspot").on("mouseleave", function() {
-	      $(this).removeClass("is-hovering");
-	    });
 
 	    function activateTabletopTask(taskId) {
 	      var $selectedButton = $('.task-selector-button[data-task="' + taskId + '"]');
